@@ -1,0 +1,11 @@
+FROM python:3.8
+COPY ./app /app
+ENV name=DockerName
+ENV hostip=postgres
+ENV broker=redis
+ENV broker_db=1
+ENV backend=redis
+ENV backend_db=2
+RUN pip install gunicorn
+RUN pip install -r /app/requirements.txt
+WORKDIR /app

@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis
+    expose:
+      - 6379
+  celery:
+    build:
+      context: ./components/celery
+    command: celery -A task worker --loglevel=INFO -P eventlet
+    depends_on:
+      - redis
+    expose:
+      - 6379
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=web_01
+  web:
+    build:
+      context: ./components/web
+    command: gunicorn --bind 0.0.0.0:5000 run:app
+    expose:
+      - 5000
+    depends_on:
+      - postgres
+      - celery
+      - redis
+  nginx:
+    build: ./components/nginx
+    ports:
+      - 8080:80
+    depends_on:
+      - web

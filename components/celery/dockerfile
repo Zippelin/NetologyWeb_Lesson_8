@@ -1,0 +1,11 @@
+FROM python:3.8
+COPY ./tasks /tasks
+ENV broker=redis
+ENV broker_db=1
+ENV backend=redis
+ENV backend_db=2
+ENV hostip=postgres
+RUN pip install celery
+RUN pip install eventlet
+RUN pip install redis
+WORKDIR /tasks
